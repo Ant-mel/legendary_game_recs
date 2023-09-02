@@ -36,3 +36,14 @@ def make_list_columns_to_lists(df, columns):
         cleaned = clean_stringlists(df[col])
         cleaned_df[col] = cleaned
     return cleaned_df
+
+
+# ONE HOT ENCODER
+def categorical_encoder(category):
+    '''This creates an OHE, and returns the columns as well as the encoder'''
+    mlb = MultiLabelBinarizer()
+    transformed = mlb.fit_transform(category)
+
+    df = pd.DataFrame(transformed, columns=mlb.classes_)
+
+    return df, mlb
