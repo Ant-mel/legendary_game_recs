@@ -96,3 +96,13 @@ def date_reformatted(df, column):
     df[column] = df[column].apply(remove_hyphens)
     df[column] = df[column].apply(change_to_datetype)
     return df
+
+# ONE HOT ENCODER
+def categorical_encoder(category):
+    '''This creates an OHE, and returns the columns as well as the encoder'''
+    mlb = MultiLabelBinarizer()
+    transformed = mlb.fit_transform(category)
+
+    df = pd.DataFrame(transformed, columns=mlb.classes_)
+
+    return df, mlb
