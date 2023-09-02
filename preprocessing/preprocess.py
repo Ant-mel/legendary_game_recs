@@ -1,6 +1,11 @@
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 
+# STRING PROCESSING
+
+# The below functions clean Genres, Platforms, Developer columns
+# Only the last function matters - make_list_column_to_lists
+# It runs all the ones above it
 def make_stringlist_list(string):
     '''This removes square brackets, and splits the string by comma to the create a list'''
     list_of_strings = string[2:-2].replace("'", '').split(',')
@@ -22,6 +27,7 @@ def clean_stringlists(df):
 
     return remove_whitespace_df
 
+# This is the final one mentioned above
 def make_list_columns_to_lists(df, columns):
     '''This returns a dataframe of columns where lists where imported as strings, and returns them to their list state'''
     cleaned_df = pd.DataFrame()
