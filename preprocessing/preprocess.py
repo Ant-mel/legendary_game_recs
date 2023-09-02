@@ -62,6 +62,7 @@ def remove_K(x):
         return x
 
 #This is the final function for use on numeric columns
+# numeric_columns = ['plays','playing','backlogs','wishlist','total_reviews','total_lists']
 def numeric_objects_reformatted(df, column):
     '''This function applies the removal of K and . above in order, and returns as integers'''
     df[column] = df[column].apply(remove_K_and_fullstop)
