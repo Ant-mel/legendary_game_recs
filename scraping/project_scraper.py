@@ -7,7 +7,7 @@ import time
 import csv
 
 # Loading my link data
-with open('../raw_data/all_links_v1', 'rb') as links:
+with open('raw_data/all_links_v1', 'rb') as links:
     game_links = pickle.load(links)
 frame = pd.DataFrame(game_links)
 
@@ -17,7 +17,7 @@ missed_data = []
 game_data = []
 count = 0
 
-for game in frame[0][30000:60000]:
+for game in frame[0][0:30000]:
     # Monitoring progress
     if count % 250 == True:
         print(count)
@@ -149,11 +149,11 @@ for game in frame[0][30000:60000]:
     except:
         print(f'Failed at {game}, count = {count}')
         missed_data.append(game)
-        time.sleep(70)
+        time.sleep(60)
 
 game_df = pd.DataFrame(game_data)
-game_df.to_csv('all_data_batch1_30to60k', index=False)
+game_df.to_csv('raw_data/all_data_batch_0to30k', index=False)
 
-with open ('missed_data_v2', 'w') as csvfile:
+with open ('raw_data/missed_data_0to30k', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(missed_data)
