@@ -107,7 +107,7 @@ def change_to_datetype(x):
     if x == '00010101':
         return 'null'
     else:
-        return datetime.strptime(x, '%Y%m%d').strftime('%m/%d/%Y')
+        return datetime.strptime(x, '%Y%m%d').strftime('%Y-%m-%d')
 
 
 #This is the final function for use on date columns
