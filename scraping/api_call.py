@@ -1,17 +1,58 @@
+import os
+import sys
 import pandas as pd
 import requests
 from igdb.wrapper import IGDBWrapper
 import json
+import matplotlib.pyplot as plt
+sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
+from preprocessing.preprocess_1_cleaning import *
+
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+GRANT_TYPE = os.getenv("GRANT_TYPE")
 
 # Function that creates a list of features
-def get_list_of_features(the_json,igdb_feature_name):
-    feature_list = []
+def get_list_of_features(the_json):
+    feature_dic = {"id":None,
+        "aggregated_rating": None,
+        "aggregated_rating_count": None,
+        "game_engines": None,
+        "game_modes": None,
+        "player_perspectives": None,
+        "themes": None,
+        'rating': None}
 
-    for i in range(len(the_json[0][igdb_feature_name])):
-        feat = the_json[0][igdb_feature_name][i]['name']
-        feature_list.append(feat)
+    for key in the_json.keys():
+        if type(the_json[key]) == list:
+            for i in range(len(the_json[key])):
+                value = the_json[key][i]['name']
+                feature_dic.update({f'{key}': value})
 
-    return feature_list
+        else:
+            value = the_json[key]
+            feature_dic.update({f'{key}': value})
+
+    return feature_dic
+
+
+#Getting the data
+data = pd.read_csv('raw_data/all_game_data_v1', low_memory=False)
+df = cleaning_in_notebook(data)
+
+df_mask = df['avg_review'] == 0
+df_good_mask = df['avg_review'] != 0
+
+df_no_reviews = df[df_mask]
+df_with_reviews = df[df_good_mask]
+
+df_sorted = df_no_reviews.sort_values('release_date')
+time_mask = df_sorted['release_date'] < "2023-08-01"
+no_duplicates_recent_games = df_sorted[time_mask].drop_duplicates('title')
+review_columsn = no_duplicates_recent_games
+
+list_of_titles_without_review = review_columsn['title']
+list_of_titles_without_review
 
 
 # Credentials for calling the API
@@ -22,32 +63,26 @@ response_json = response.json()
 ACCESS_TOKEN = response_json['access_token']
 
 
-
 wrapper = IGDBWrapper(CLIENT_ID, ACCESS_TOKEN)
 
-no_reviews = []
 no_data = []
+list_dicts = []
 
-for game in no_review_titles[1620:8520]:
-    features = json.loads(wrapper.api_request('games',
-                    'fields aggregated_rating,aggregated_rating_count, game_engines.name, game_modes.name, multiplayer_modes, player_perspectives.name, themes.name, rating; where name = "{game}";'))
+for game in list_of_titles_without_review:
+    try:
+        the_feat = json.loads(wrapper.api_request('games',
+                        f'fields aggregated_rating,aggregated_rating_count, game_engines.name, game_modes.name, multiplayer_modes, player_perspectives.name, themes.name, rating; where name = "{game}";'))
 
-    if len(features) == 0:
+        v = get_list_of_features(the_feat[0])
+        v.update({'title':game})
+        list_dicts.append(v)
+
+    except:
+        print('fail')
         no_data.append(game)
 
-    else:
-        game_id = features[0]['id']
-        critic_rating = features[0]['aggregated_rating']
-        number_of_critics = features[0]['aggregated_rating_count']
-        game_engines = get_list_of_features(features, 'game_engines')
-        game_modes = get_list_of_features(features, 'game_modes')
-        player_perspectives = get_list_of_features(features, 'player_perspectives')
-        themes = get_list_of_features(features, 'themes')
+the_frame = pd.DataFrame(list_dicts)
+the_frame.to_csv('raw_data/api_on_data_without_reviews', index=False)
 
-        no_reviews.append({'game_id': game_id,
-                'critic_rating':critic_rating,
-                'number of critics' :number_of_critics,
-                'game_engines':game_engines,
-                'game_modes':game_modes,
-                'player_perspectives': player_perspectives,
-                'themes': themes})
+missed = pd.DataFrame(no_data)
+missed.to_csv('raw_data/api_missed_data_without_reviews', index=False)
