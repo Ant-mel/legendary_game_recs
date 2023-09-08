@@ -22,11 +22,11 @@ for page in pages:
         #Scraping the Backloggd page link and IGDB game_id
         link = game.find('a', href=True)['href']
         id = game['game_id']
-
+        print(id)
 
         links_id.append({'link':link,
                         'game_id':id})
 
 #Saves to dataframe then stores as csv
 the_frame = pd.DataFrame(links_id)
-the_frame.to_csv('../raw_data/all_links_test', index=False)
+the_frame.to_csv('raw_data/all_links_with_game_id_v1', index=False)
