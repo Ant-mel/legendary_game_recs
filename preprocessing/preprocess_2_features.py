@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
-from datetime import datetime
+import datetime
 
 # ONE HOT ENCODER
 def categorical_encoder(category):
@@ -42,3 +42,31 @@ def keeping_ohe_columns_and_dropping_the_originals(df_of_columns, num_ohe):
         empty = pd.concat((empty, cols_to_keep), axis=1)
 
     return empty
+
+
+# CREATING GENERATIONAL FEATURE
+# This function subsets the generation
+def create_gen(seri):
+    gen_1_end = datetime.datetime.strptime('1983-01-01', '%Y-%m-%d')
+    gen_2_end = datetime.datetime.strptime('1995-01-01', '%Y-%m-%d')
+    gen_3_end = datetime.datetime.strptime('2006-01-01', '%Y-%m-%d')
+    gen_4_end = datetime.datetime.strptime('2014-01-01', '%Y-%m-%d')
+    gen_5_end = datetime.datetime.strptime('2023-10-01', '%Y-%m-%d')
+
+    dupe = seri
+    dupe['gen'] = None
+
+    for i, date in enumerate(dupe['release_date']):
+        if date < gen_1_end:
+            dupe.iloc[i, 27] = 1
+        elif date < gen_2_end:
+            dupe.iloc[i, 27] = 2
+        elif date < gen_3_end:
+            dupe.iloc[i, 27] = 3
+        elif date < gen_4_end:
+            dupe.iloc[i, 27] = 4
+        elif date < gen_5_end:
+            dupe.iloc[i, 27] = 5
+        else:
+            dupe.iloc[i, 27] = 6
+    return dupe
