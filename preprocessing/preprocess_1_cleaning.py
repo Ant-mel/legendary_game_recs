@@ -1,12 +1,24 @@
+import sys
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
-from datetime import datetime
+import datetime
+from preprocessing.preprocess_2_features import create_gen
+
 
 # After importing a dataframe (df) from the raw data csv, run
 # game_df = cleaning_in_notebook(df)
 # **We are chaining copies of the original df so it is advisable to assign the
 # cleaned dataframe as a new variable
+
+
+# ONLY MAIN GAMES
+# This function removes everything that is not a main game
+def only_main_games(df):
+    main_game_mask =df['category'] == 'main'
+    only_main_games = df[main_game_mask]
+
+    return only_main_games.drop('category', axis=1)
 
 
 # DELETING ROWS
@@ -102,8 +114,6 @@ def change_to_datetype(df, column):
     df[column]=pd.to_datetime(df[column])
     return df
 
-
-
 # DELETING NULL RELEASE DATES
 
 # The below function removes games with no release date
@@ -133,8 +143,11 @@ def cleaning_in_notebook(df):
     df2 = drop_duplicates(df)
     df3 = drop_no_release_date(df2)
     df4 = change_to_datetype(df3, 'release_date')
-    df4[string_columns] = make_list_columns_to_lists(df4, string_columns)
+    df4_5 = create_gen(df4)
+    df4[string_columns] = make_list_columns_to_lists(df4_5, string_columns)
     for x in numeric_columns:
         numeric_objects_reformatted(df4, x)
     df4['plays'] = np.where(df4['plays'] < 0, 0, df4['plays'])
+
+
     return df4
