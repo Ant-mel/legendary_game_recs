@@ -125,6 +125,16 @@ def date_reformatted(df, column):
 def delete_no_release_date(df):
     return df[df['release_date'] != "null"]
 
+# REMOVING NO REVIEWS
+
+# This function removes rows with no avg_review
+def remove_no_reviews(df):
+    df_good_mask = df['avg_review'] != 0
+    df_with_reviews = df[df_good_mask]
+
+    return df_with_reviews
+
+
 # CLEANING IN NOTEBOOK FUNCTION
 # This function runs all the above functions on the dataframe version of the raw data
 # The function also replaces plays of -1 with plays of 0
