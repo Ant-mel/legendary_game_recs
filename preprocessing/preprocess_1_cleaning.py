@@ -3,21 +3,25 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 from datetime import datetime
 
+# After importing a dataframe (df) from the raw data csv, run
+# game_df = cleaning_in_notebook(df)
+# **We are chaining copies of the original df so it is advisable to assign the
+# cleaned dataframe as a new variable
 
-# How to clean in notebook:
-# 1) df = pd.read_csv("location of raw data", low_memory=False)
-# 2) df = drop_duplicates(df)
-# 3) df = cleaning_in_notebook(df)
 
-# DELETING DUPLICATES
+# DELETING ROWS
 
-# The below function deletes duplicates
-# This function must come first: dropping duplicates works with strings not lists
-# Drop duplicates needs to be run separately before cleaning_in_notebook
+# The below functions delete: duplicates; games with no release dates
 
 def drop_duplicates(df):
+    '''This function deletes duplicates'''
     df.sort_values('title')
     return df.drop_duplicates()
+
+def drop_no_release_date(df):
+    '''This function deletes games with no release date'''
+    df = df[df['release_date'] != "0001-01-01"]
+    return df
 
 
 # STRING PROCESSING
@@ -64,58 +68,40 @@ def make_list_columns_to_lists(df, columns):
 # Only the last function matters - numeric_objects_reformatted
 # It runs all the ones above it
 
-def remove_K_and_fullstop(x):
+def thousands_converter(x):
     '''This function removes the K and . from objects such as 4.1K, replacing with 4100'''
     if 'K' in x and '.' in x:
         x = x.replace('K', '00')
         x = x.replace('.','')
         return x
-    else:
-        return x
-
-def remove_K(x):
-    '''This function removes the K from objscts such as 92K, replacing with 92000'''
-    if 'K' in x:
+    elif 'K' in x:
         return x.replace('K','000')
     else:
         return x
+
+#def remove_K(x):
+ #   '''This function removes the K from objscts such as 92K, replacing with 92000'''
+  #  if
+   # else:
+    #    return x
 
 #This is the final function for use on numeric columns
 # numeric_columns = ['plays','playing','backlogs','wishlist','total_reviews','total_lists']
 def numeric_objects_reformatted(df, column):
     '''This function applies the removal of K and . above in order, and returns as integers'''
-    df[column] = df[column].apply(remove_K_and_fullstop)
-    df[column] = df[column].apply(remove_K)
+    df[column] = df[column].apply(thousands_converter)
     df[column] = df[column].astype('int')
     return df
 
 
 # DATETIME PROCESSING
 
-#The below functions clean the Release_Date column
-# Only the last function matters - date_reformatted
-# It runs all the ones above it
+#The below changes the type of the release_date column
 
-def remove_hyphens(x):
-    '''This function removes hyphens between numbers'''
-    if '-' in x:
-        x = x.replace('-', '')
-        return str(x)
-
-def change_to_datetype(x):
-    '''This function changes objects to null if no date, or date type'''
-    if x == '00010101':
-        return 'null'
-    else:
-        return datetime.strptime(x, '%Y%m%d').strftime('%Y%m%d')
-
-
-#This is the final function for use on date columns
-def date_reformatted(df, column):
-    '''This function applies the functions above to return a date type column'''
-    df[column] = df[column].apply(remove_hyphens)
-    df[column] = df[column].apply(change_to_datetype)
+def change_to_datetype(df, column):
+    df[column]=pd.to_datetime(df[column])
     return df
+
 
 
 # DELETING NULL RELEASE DATES
@@ -134,22 +120,21 @@ def remove_no_reviews(df):
 
     return df_with_reviews
 
-
 # CLEANING IN NOTEBOOK FUNCTION
 # This function runs all the above functions on the dataframe version of the raw data
 # The function also replaces plays of -1 with plays of 0
 # It returns a cleaned dataframe
-# Drop duplicates needs to be run separately before cleaning_in_notebook
 # Import functions at top of notebook with:
 # from preprocessing.preprocess_1_cleaning import *
 
 def cleaning_in_notebook(df):
     numeric_columns = ['plays','playing','backlogs','wishlist','total_reviews','total_lists']
     string_columns = ['developers','genres','platforms']
-    df = date_reformatted(df, 'release_date')
-    df[string_columns] = make_list_columns_to_lists(df, string_columns)
+    df2 = drop_duplicates(df)
+    df3 = drop_no_release_date(df2)
+    df4 = change_to_datetype(df3, 'release_date')
+    df4[string_columns] = make_list_columns_to_lists(df4, string_columns)
     for x in numeric_columns:
-        numeric_objects_reformatted(df, x)
-    df = delete_no_release_date(df)
-    df['plays'] = np.where(df['plays'] < 0, 0, df['plays'])
-    return df
+        numeric_objects_reformatted(df4, x)
+    df4['plays'] = np.where(df4['plays'] < 0, 0, df4['plays'])
+    return df4
