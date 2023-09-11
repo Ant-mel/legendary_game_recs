@@ -79,7 +79,7 @@ no_data = []
 list_sons = []
 
 
-for game in game_ids_list[50000:50010]:
+for game in game_ids_list[50000:60000]:
     try:
         the_feat = json.loads(wrapper.api_request('games',
                 f'fields age_ratings.rating, age_ratings.content_descriptions.category,aggregated_rating,aggregated_rating_count, game_engines.name, game_modes.name, multiplayer_modes, player_perspectives.name, themes.name, name, rating; where id = {game};'))
@@ -90,11 +90,11 @@ for game in game_ids_list[50000:50010]:
         no_data.append(game)
 
 
-with open('raw_data/api_json_0to30k', 'w') as json_file:
+with open('raw_data/api_json_50kto60k', 'w') as json_file:
     json.dump(list_sons, json_file)
 
 missed = pd.DataFrame(no_data)
-missed.to_csv('raw_data/api_json_missed_0to30k', index=False)
+missed.to_csv('raw_data/api_json_missed_50kto60k', index=False)
 
 
 # #This for loop runs game titles to get the data
