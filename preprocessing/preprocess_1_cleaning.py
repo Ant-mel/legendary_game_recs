@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import datetime
-from preprocessing.preprocess_2_features import create_gen
+from preprocessing.preprocess_2_features import create_gen, create_gen_3
 
 
 # After importing a dataframe (df) from the raw data csv, run
@@ -130,6 +130,20 @@ def remove_no_reviews(df):
 
     return df_with_reviews
 
+# REMOVING UNNECESARY COLUMNS
+
+def drop_unnecesary_coulumns(df):
+    cols_to_drop = ['developers', 'platforms',
+                    'ratings_one_zero', 'ratings_one_five',
+                    'ratings_two_zero', 'ratings_two_five',
+                    'ratings_three_zero', 'ratings_three_five',
+                    'ratings_four_zero', 'ratings_four_five',
+                    'ratings_five_zero', 'ratings_zero_five',
+                    'image', 'url', 'main', 'title', 'release_date']
+
+    return df.drop(cols_to_drop, axis=1)
+
+
 # CLEANING IN NOTEBOOK FUNCTION
 # This function runs all the above functions on the dataframe version of the raw data
 # The function also replaces plays of -1 with plays of 0
@@ -143,7 +157,7 @@ def cleaning_in_notebook(df):
     df2 = drop_duplicates(df)
     df3 = drop_no_release_date(df2)
     df4 = change_to_datetype(df3, 'release_date')
-    df4_5 = create_gen(df4)
+    df4_5 = create_gen_3(df4)
     df4[string_columns] = make_list_columns_to_lists(df4_5, string_columns)
     for x in numeric_columns:
         numeric_objects_reformatted(df4, x)
