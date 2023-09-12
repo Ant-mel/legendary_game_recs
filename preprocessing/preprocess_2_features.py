@@ -70,3 +70,24 @@ def create_gen(seri):
         else:
             dupe.iloc[i, 27] = 6
     return dupe
+
+
+def create_gen_3(seri):
+    gen_1_end = datetime.datetime.strptime('1983-01-01', '%Y-%m-%d')
+    gen_2_end = datetime.datetime.strptime('1995-01-01', '%Y-%m-%d')
+    gen_3_end = datetime.datetime.strptime('2006-01-01', '%Y-%m-%d')
+    gen_4_end = datetime.datetime.strptime('2014-01-01', '%Y-%m-%d')
+    gen_5_end = datetime.datetime.strptime('2023-10-01', '%Y-%m-%d')
+
+    dupe = seri
+    dupe['gen'] = None
+
+    for i, date in enumerate(dupe['release_date']):
+        if date < gen_2_end:
+            dupe.iloc[i, 27] = 1
+        elif date < gen_4_end:
+            dupe.iloc[i, 27] = 2
+        else:
+            dupe.iloc[i, 27] = 3
+
+    return dupe
