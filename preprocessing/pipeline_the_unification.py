@@ -8,6 +8,7 @@ sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
 from preprocessing.preprocess_1_cleaning import *
 from preprocessing.preprocess_2_features import *
 from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import MinMaxScaler
 
 from sklearn.pipeline import make_pipeline
 from sklearn.pipeline import make_union
@@ -43,3 +44,20 @@ def pipeline_genre_ohe_only(df):
     no_gen = pd.get_dummies(no_genre, columns=['gen'])
 
     return no_gen
+
+
+num_transformer = Pipeline([('mm_scaler', MinMaxScaler())])
+
+col_transformer = ColumnTransformer([('num_transformer', num_transformer,
+                                   ['plays','playing','backlogs','wishlist','total_reviews','total_lists'])],
+                                  remainder='passthrough')
+
+def make_training_data(reference_data):
+    dropped = drop_unnecesary_coulumns(reference_data)
+
+    transformed = pd.DataFrame(col_transformer.fit_transform(dropped))
+
+    X_train = transformed.drop(6, axis=1)
+    y_train = transformed[6]
+
+    return X_train, y_train
