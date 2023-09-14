@@ -25,8 +25,7 @@ drop_some_cols = FunctionTransformer(drop_unnecesary_coulumns)
 
 pipeline = Pipeline([('cleaning', cleaning),
                      ('remove_no_reviews', remove_0_reviews),
-                     ('keeps_only_main_games', only_mains),
-                     ('drops_useless_columns', drop_some_cols)])
+                     ('keeps_only_main_games', only_mains)])
 
 
 def pipeline_genre_ohe_only(df):
@@ -34,11 +33,13 @@ def pipeline_genre_ohe_only(df):
     This cleans the data, removes 0 value reviews and returns x amount of ohe columns of genre
     '''
     new_data = pipeline.fit_transform(df)
-    reset_index = new_data.reset_index()
+    reset_index_df = new_data.reset_index(drop=True)
 
-    ohe, mlb = categorical_encoder(reset_index['genres'])
+    ohe, mlb = categorical_encoder(reset_index_df['genres'])
     cols = keep_x_OHE_columns(ohe)
 
-    concats = pd.concat([reset_index, cols], axis=1)
+    concats = pd.concat([reset_index_df, cols], axis=1)
+    no_genre = concats.drop('genres', axis=1)
+    no_gen = pd.get_dummies(no_genre, columns=['gen'])
 
-    return pd.get_dummies(concats, columns=['gen'])
+    return no_gen
