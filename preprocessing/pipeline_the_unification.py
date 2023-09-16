@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import FunctionTransformer
+from sklearn.preprocessing import FunctionTransformer, PowerTransformer
 from sklearn import set_config; set_config(display='diagram')
 
 sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
@@ -56,6 +56,23 @@ def make_training_data(reference_data):
     dropped = drop_unnecesary_coulumns(reference_data)
 
     transformed = pd.DataFrame(col_transformer.fit_transform(dropped))
+
+    X_train = transformed.drop(6, axis=1)
+    y_train = transformed[6]
+
+    return X_train, y_train
+
+
+num_transformer_yeo = PowerTransformer(method='yeo-johnson', standardize=False)
+
+col_transformer_yeo = ColumnTransformer([('num_transformer', num_transformer_yeo,
+                                   ['plays','playing','backlogs','wishlist','total_reviews','total_lists'])],
+                                  remainder='passthrough')
+
+def make_training_data_yeo(reference_data):
+    dropped = drop_unnecesary_coulumns(reference_data)
+
+    transformed = pd.DataFrame(col_transformer_yeo.fit_transform(dropped))
 
     X_train = transformed.drop(6, axis=1)
     y_train = transformed[6]
