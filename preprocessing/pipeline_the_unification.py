@@ -40,8 +40,8 @@ def pipeline_genre_ohe_only(df):
     cols = keep_x_OHE_columns(ohe)
 
     concats = pd.concat([reset_index_df, cols], axis=1)
-    no_genre = concats.drop('genres', axis=1)
-    no_gen = pd.get_dummies(no_genre, columns=['gen'])
+    # no_genre = concats.drop('genres', axis=1)
+    no_gen = pd.get_dummies(concats, columns=['gen'])
 
     return no_gen
 
@@ -53,7 +53,8 @@ col_transformer = ColumnTransformer([('num_transformer', num_transformer,
                                   remainder='passthrough')
 
 def make_training_data(reference_data):
-    dropped = drop_unnecesary_coulumns(reference_data)
+    no_genre = reference_data.drop('genres', axis=1)
+    dropped = drop_unnecesary_coulumns(no_genre)
 
     transformed = pd.DataFrame(col_transformer.fit_transform(dropped))
 
