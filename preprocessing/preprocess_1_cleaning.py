@@ -139,7 +139,8 @@ def drop_unnecesary_coulumns(df):
                     'ratings_three_zero', 'ratings_three_five',
                     'ratings_four_zero', 'ratings_four_five',
                     'ratings_five_zero', 'ratings_zero_five',
-                    'image', 'url', 'main', 'title', 'release_date', 'description']
+                    'image', 'url', 'main', 'title', 'release_date',
+                    'description', 'link', 'game_id']
 
     return df.drop(cols_to_drop, axis=1)
 
