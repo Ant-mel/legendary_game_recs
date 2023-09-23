@@ -21,7 +21,7 @@ def create_baseline_model(raw_data):
 def predict_baseline_model(indicies, model, reference_data, X_train):
     game = X_train[indicies:indicies+1]
 
-    ind_list = list(model.kneighbors(game,n_neighbors=11)[1][0])
+    ind_list = list(model.kneighbors(game,n_neighbors=1000)[1][0])
     prediction = reference_data.iloc[ind_list]
 
     return prediction
