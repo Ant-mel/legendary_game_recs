@@ -1,8 +1,8 @@
 import sys
 import streamlit as st
-from preprocessing.pipeline_the_unification import *
-from preprocessing.api_processing import *
-from model.model_create import *
+from ..preprocessing.pipeline_the_unification import *
+from ..preprocessing.api_processing import *
+from ..model.model_create import *
 from front_end.app_filters import *
 from igdb.wrapper import IGDBWrapper
 import requests
