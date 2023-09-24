@@ -1,0 +1,15 @@
+scikit-learn==1.2.1
+seaborn
+numpy==1.23.5
+pandas==1.5.3
+ipykernel
+yapf
+matplotlib
+pygeohash
+pytest
+
+
+google-cloud-bigquery
+google-cloud-storage
+db-dtypes
+pyarrow
