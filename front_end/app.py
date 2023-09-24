@@ -1,7 +1,5 @@
 import sys
-sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
 import streamlit as st
-from streamlit_searchbox import st_searchbox
 from preprocessing.pipeline_the_unification import *
 from preprocessing.api_processing import *
 from model.model_create import *
@@ -11,10 +9,8 @@ import requests
 import os
 import json
 import pandas as pd
-import pickle
 import datetime
 from joblib import dump, load
-from json import loads, dumps
 
 
 st.title("World's best video game recommendation engine")
