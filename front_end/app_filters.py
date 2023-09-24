@@ -119,7 +119,8 @@ def time_range_start_stop(df, start, stop):
     if stop == 'Any':
         return df_filt_start
     if stop == 'Prehistoric':
-        return df_filt_start
+        df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
+                    zone_1 > x)]
     if stop == '1980s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
                     zone_2 > x)]
