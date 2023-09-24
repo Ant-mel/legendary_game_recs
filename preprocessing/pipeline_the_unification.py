@@ -52,7 +52,21 @@ pipeline = Pipeline([('cleaning', cleaning),
 
 #    return reference_dataframe
 
+def pipeline_genre_ohe_only(df):
+    '''
+    This cleans the data, removes 0 value reviews and returns x amount of ohe columns of genre
+    '''
+    new_data = pipeline.fit_transform(df)
+    reset_index_df = new_data.reset_index(drop=True)
 
+    ohe, mlb = categorical_encoder(reset_index_df['genres'])
+    cols = keep_x_OHE_columns(ohe)
+
+    concats = pd.concat([reset_index_df, cols], axis=1)
+    # no_genre = concats.drop('genres', axis=1)
+    no_gen = pd.get_dummies(concats, columns=['gen'])
+
+    return no_gen
 
 def make_reference_df_full_csv(df):
     string_columns = ['developers','genres','platforms']
