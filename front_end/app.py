@@ -1,16 +1,24 @@
 import sys
+import os
+
+script_directory = os.path.dirname(os.path.abspath(__file__))
+
+# Add the project root directory to sys.path
+project_root_directory = os.path.join(script_directory, '..')
+sys.path.append(project_root_directory)
+
+
 import streamlit as st
-from ..preprocessing.pipeline_the_unification import *
-from ..preprocessing.api_processing import *
-from ..model.model_create import *
+from preprocessing.pipeline_the_unification import *
+from preprocessing.api_processing import *
+from model.model_create import *
 from front_end.app_filters import *
 from igdb.wrapper import IGDBWrapper
 import requests
-import os
 import json
 import pandas as pd
 import datetime
-from joblib import dump, load
+from joblib import load
 
 
 st.title("World's best video game recommendation engine")
