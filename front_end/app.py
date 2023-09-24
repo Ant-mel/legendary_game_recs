@@ -9,10 +9,10 @@ sys.path.append(project_root_directory)
 
 
 import streamlit as st
-from preprocessing.pipeline_the_unification import *
-from preprocessing.api_processing import *
-from model.model_create import *
-from front_end.app_filters import *
+from preprocessing.pipeline_the_unification import change_to_datetype
+from preprocessing.api_processing import get_names_from_dict
+from model.model_create import predict_baseline_model
+from front_end.app_filters import genre_filter, time_range_start_stop, platform_filter
 from igdb.wrapper import IGDBWrapper
 import requests
 import json
