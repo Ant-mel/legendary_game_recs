@@ -24,12 +24,12 @@ st.title("World's best video game recommendation engine")
 # raw_reference[['genres', 'platforms']] = make_list_columns_to_lists(raw_reference, ['genres', 'platforms'])
 # raw_data_date = change_to_datetype(raw_reference, 'release_date')
 
-raw_data = pd.read_json('raw_data/reference_df_v1', orient='records', lines=True)
+raw_data = pd.read_json('raw_data/reference_df_v2', orient='records', lines=True)
 games = change_to_datetype(raw_data, 'release_date')
 # X_train = pd.read_csv('raw_data/basline_X_train')
-X_train = pd.read_json('raw_data/xtrain_df_v1', orient='records', lines=True)
+X_train = pd.read_json('raw_data/xtrain_df_v2', orient='records', lines=True)
 # model = pickle.load(open('raw_data/basline_model', 'rb'))
-model = load('raw_data/model_v1.joblib')
+model = load('raw_data/model_v2.joblib')
 
 
 # Initialize a list to store filtered game titles
@@ -100,9 +100,6 @@ if selected_game:
     # st.write(int(filt_platform[1:2]['game_id']))
 
     first_rec_game_id = int(filt_platform[1:2]['game_id'])
-    st.write(first_rec_game_id)
-
-
 
     #Calling hte API
     CLIENT_ID = os.getenv("CLIENT_ID")
@@ -144,11 +141,6 @@ if selected_game:
 
     #Youtube Video
     youtube_base = 'https://www.youtube.com/watch?v='
-    try:
-        game_video_id = str(the_feat[0]['videos'][0]['video_id'])
-        video_file = youtube_base + game_video_id
-    except:
-        video_file = None
 
     st.header('You should try:', divider='rainbow')
 
@@ -166,21 +158,13 @@ if selected_game:
         st.markdown(f'**Genres**: {genre_list}')
 
 
-    with st.expander(f"Watch trailer"):
-        if video_file == None:
-            pass
-        else:
-            st.video(video_file)
-
-        # sub_col1, sub_col2 = st.columns(2)
-
-        # with sub_col1:
-        #     st.markdown(f"**Released on**: {normal_date}")
-        #     st.markdown(f'**Genres**: {genre_list}')
-
-        # with sub_col2:
-        #     st.write('')
-        #     if video_file == None:
-        #         pass
-        #     else:
-        #         st.video(video_file)
+    try:
+        game_video_id = str(the_feat[0]['videos'][0]['video_id'])
+        video_file = youtube_base + game_video_id
+        with st.expander(f"Watch trailer"):
+            if video_file == None:
+                pass
+            else:
+                st.video(video_file)
+    except:
+       pass
