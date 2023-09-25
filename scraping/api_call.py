@@ -7,7 +7,6 @@ import json
 import matplotlib.pyplot as plt
 sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
 from preprocessing.preprocess_1_cleaning import *
-from urllib.parse import quote
 
 # Function that creates a list of features
 def get_list_of_features(the_json):
@@ -56,6 +55,11 @@ def get_list_of_features(the_json):
 # with_reviews_dropped_dupes = df_with_reviews.drop_duplicates('title')
 # titles_with_reviews = with_reviews_dropped_dupes['title']
 
+# List of games used in the model
+reference_df= pd.read_json('raw_data/reference_df_v2', orient='records', lines=True)
+list_of_game_id = reference_df['game_id']
+
+# List of all game
 game_ids = pd.read_csv('raw_data/all_links_with_game_id_v1').drop_duplicates()
 game_ids_list = game_ids['game_id']
 
@@ -79,10 +83,17 @@ no_data = []
 list_sons = []
 
 
-for game in game_ids_list[110000:120096]:
+for game in list_of_game_id:
+# Intial try
+    # try:
+    #     the_feat = json.loads(wrapper.api_request('games',
+    #             f'fields age_ratings.rating, age_ratings.content_descriptions.category,aggregated_rating,aggregated_rating_count, game_engines.name, game_modes.name, multiplayer_modes, player_perspectives.name, themes.name, name, rating; where id = {game};'))
+    #     list_sons.append(the_feat[0])
+
+# update try
     try:
         the_feat = json.loads(wrapper.api_request('games',
-                f'fields age_ratings.rating, age_ratings.content_descriptions.category,aggregated_rating,aggregated_rating_count, game_engines.name, game_modes.name, multiplayer_modes, player_perspectives.name, themes.name, name, rating; where id = {game};'))
+                f'fields franchise, storyline; where id = {int(game)};'))
         list_sons.append(the_feat[0])
 
     except:
@@ -90,11 +101,11 @@ for game in game_ids_list[110000:120096]:
         no_data.append(game)
 
 
-with open('raw_data/api_json_110ktoEndk', 'w') as json_file:
+with open('raw_data/storyline_franchise_v1', 'w') as json_file:
     json.dump(list_sons, json_file)
 
 missed = pd.DataFrame(no_data)
-missed.to_csv('raw_data/api_json_missed_110ktoEndk', index=False)
+missed.to_csv('raw_data/storyline_franchise_missed', index=False)
 
 
 # #This for loop runs game titles to get the data
