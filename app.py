@@ -1,13 +1,13 @@
 import sys
 import os
 
-sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
+# sys.path.append("/Users/antonis/code/Ant-mel/legendary_game_recs/")
 
 # Was hoping to put the site online...
-# script_directory = os.path.dirname(os.path.abspath(__file__))
-# # Add the project root directory to sys.path
-# project_root_directory = os.path.join(script_directory, '..')
-# sys.path.append(project_root_directory)
+script_directory = os.path.dirname(os.path.abspath(__file__))
+# Add the project root directory to sys.path
+project_root_directory = os.path.join(script_directory, '..')
+sys.path.append(project_root_directory)
 
 import streamlit as st
 from preprocessing.pipeline_the_unification import change_to_datetype
@@ -29,12 +29,18 @@ st.title("World's best video game recommendation engine")
 # raw_reference[['genres', 'platforms']] = make_list_columns_to_lists(raw_reference, ['genres', 'platforms'])
 # raw_data_date = change_to_datetype(raw_reference, 'release_date')
 
-raw_data = pd.read_json('raw_data/reference_df_v3', orient='records', lines=True)
+# This is for running the app online
+raw_data = pd.read_json('data/reference_df_v3', orient='records', lines=True)
 games = change_to_datetype(raw_data, 'release_date')
-# X_train = pd.read_csv('raw_data/basline_X_train')
-X_train = pd.read_json('raw_data/xtrain_df_v3', orient='records', lines=True)
-# model = pickle.load(open('raw_data/basline_model', 'rb'))
-model = load('raw_data/model_v3.joblib')
+X_train = pd.read_json('data/xtrain_df_v3', orient='records', lines=True)
+model = load('model/model_v3.joblib')
+
+
+# This is fro running the app locally
+# raw_data = pd.read_json('raw_data/reference_df_v3', orient='records', lines=True)
+# games = change_to_datetype(raw_data, 'release_date')
+# X_train = pd.read_json('raw_data/xtrain_df_v3', orient='records', lines=True)
+# model = load('raw_data/model_v3.joblib')
 
 
 # Initialize a list to store filtered game titles
