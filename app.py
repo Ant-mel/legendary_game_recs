@@ -22,7 +22,7 @@ import datetime
 from joblib import load
 
 
-st.title("World's best video game recommendation engine")
+st.title("World's best video game recommendation engine", )
 
 # Specify the path to the file containing game titles
 # raw_reference = pd.read_csv('raw_data/reference_csv_v1')
@@ -61,10 +61,10 @@ list_of_genres = ['Any', 'Adventure', 'Arcade', 'Brawler', 'Card & Board Game', 
        'Shooter', 'Simulator', 'Sport', 'Strategy', 'Tactical',
        'Turn Based Strategy', 'Visual Novel']
 list_of_times = ['Any', 'Prehistoric', '1980s', '1990s', '2000s', '2010s', '2020s', 'Upcoming']
-list_of_consoles = ['Any','Windows PC', 'Mac', 'PlayStation 4', 'Nintendo Switch', 'Xbox One',
+list_of_consoles = ['Any','Xbox Series', 'PlayStation 5','Nintendo Switch','Windows PC', 'Mac', 'PlayStation 4', 'Xbox One',
        'Linux', 'iOS', 'Android', 'PlayStation 3', 'PlayStation 2', 'Xbox 360',
-       'Arcade', 'Web browser', 'Wii', 'PlayStation', 'PlayStation 5',
-       'Nintendo DS', 'Xbox Series', 'PlayStation Portable', 'PlayStation Vita', 'Nintendo 3DS', 'Xbox', 'Wii U',
+       'Arcade', 'Web browser', 'Wii', 'PlayStation',
+       'Nintendo DS', 'PlayStation Portable', 'PlayStation Vita', 'Nintendo 3DS', 'Xbox', 'Wii U',
        'Sega Mega Drive/Genesis', 'NES', 'Game Boy Advance', 'SNES',
        'Nintendo GameCube', 'Amiga']
 
@@ -94,88 +94,87 @@ with filt_col2:
     console = st.multiselect('', list_of_consoles)
 
 
-
-if selected_game:
-    # Chosen game variables
-    df_row = games[games['title'] == selected_game]
-    index = df_row.index[0]
-
-
-    #Making a prediction
-    list_of_predictions = predict_baseline_model(index, model, games, X_train)
-    # Filtering the predicitons
-    filt_genres = genre_filter(list_of_predictions, genre_box)
-    filt_date = time_range_start_stop(filt_genres, start_range, end_range)
-    filt_platform = platform_filter(filt_date, console)
-
-    # st.write(int(filt_platform[1:2]['game_id']))
-
-    first_rec_game_id = int(filt_platform[1:2]['game_id'])
-
-    #Calling hte API
-    CLIENT_ID = os.getenv("CLIENT_ID")
-    CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-    GRANT_TYPE = os.getenv("GRANT_TYPE")
-
-    #Generating the access token
-    response = requests.post(f'https://id.twitch.tv/oauth2/token?client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&grant_type={GRANT_TYPE}')
-    response_json = response.json()
-    ACCESS_TOKEN = response_json['access_token']
-
-    #This is a wrapper from IGDB just for their API
-    wrapper = IGDBWrapper(CLIENT_ID, ACCESS_TOKEN)
-
-    the_feat = json.loads(wrapper.api_request('games',
-                f'fields cover.url, cover.image_id, name, release_dates.date, genres.name, summary, videos.video_id; where id = {first_rec_game_id};'))
-
-    # st.write(the_feat[0]['summary'])
-
-    # DATA TO SHOW
-    image_id = str(the_feat[0]['cover']['image_id'])
-    second_url = f'https://images.igdb.com/igdb/image/upload/t_cover_big/{image_id}.jpg'
-
-    # Name
-    name = the_feat[0]['name']
-
-    # Summary
-    summary = the_feat[0]['summary']
-
-    #Time
-    unix_time = the_feat[0]['release_dates'][0]['date']
-    normal_date = str(datetime.datetime.utcfromtimestamp(unix_time))[:10]
-
-    #Genres
-    try:
-        genre_list = str(get_names_from_dict(the_feat[0]['genres']))[1:-1].replace("'", '')
-    except:
-        genre_list = 'None'
-
-    #Youtube Video
-    youtube_base = 'https://www.youtube.com/watch?v='
-
-    st.header('You should try:', divider='rainbow')
-
-    # Setting up the columns
-    col1, col2 = st.columns([1, 3])
-
-    with col1:
-        st.image(second_url)
-
-    with col2:
-        st.subheader(name)
-        st.write(summary)
-
-        st.markdown(f"**Released on**: {normal_date}")
-        st.markdown(f'**Genres**: {genre_list}')
+if st.button('Recommend a game'):
+        # Chosen game variables
+        df_row = games[games['title'] == selected_game]
+        index = df_row.index[0]
 
 
-    try:
-        game_video_id = str(the_feat[0]['videos'][0]['video_id'])
-        video_file = youtube_base + game_video_id
-        with st.expander(f"Watch trailer"):
-            if video_file == None:
-                pass
-            else:
-                st.video(video_file)
-    except:
-       pass
+        #Making a prediction
+        list_of_predictions = predict_baseline_model(index, model, games, X_train)
+        # Filtering the predicitons
+        filt_genres = genre_filter(list_of_predictions, genre_box)
+        filt_date = time_range_start_stop(filt_genres, start_range, end_range)
+        filt_platform = platform_filter(filt_date, console)
+
+        # st.write(int(filt_platform[1:2]['game_id']))
+
+        first_rec_game_id = int(filt_platform[1:2]['game_id'])
+
+        #Calling hte API
+        CLIENT_ID = os.getenv("CLIENT_ID")
+        CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+        GRANT_TYPE = os.getenv("GRANT_TYPE")
+
+        #Generating the access token
+        response = requests.post(f'https://id.twitch.tv/oauth2/token?client_id={CLIENT_ID}&client_secret={CLIENT_SECRET}&grant_type={GRANT_TYPE}')
+        response_json = response.json()
+        ACCESS_TOKEN = response_json['access_token']
+
+        #This is a wrapper from IGDB just for their API
+        wrapper = IGDBWrapper(CLIENT_ID, ACCESS_TOKEN)
+
+        the_feat = json.loads(wrapper.api_request('games',
+                    f'fields cover.url, cover.image_id, name, release_dates.date, genres.name, summary, videos.video_id; where id = {first_rec_game_id};'))
+
+        # st.write(the_feat[0]['summary'])
+
+        # DATA TO SHOW
+        image_id = str(the_feat[0]['cover']['image_id'])
+        second_url = f'https://images.igdb.com/igdb/image/upload/t_cover_big/{image_id}.jpg'
+
+        # Name
+        name = the_feat[0]['name']
+
+        # Summary
+        summary = the_feat[0]['summary']
+
+        #Time
+        unix_time = the_feat[0]['release_dates'][0]['date']
+        normal_date = str(datetime.datetime.utcfromtimestamp(unix_time))[:10]
+
+        #Genres
+        try:
+            genre_list = str(get_names_from_dict(the_feat[0]['genres']))[1:-1].replace("'", '')
+        except:
+            genre_list = 'None'
+
+        #Youtube Video
+        youtube_base = 'https://www.youtube.com/watch?v='
+
+        st.header('You should try:', divider='rainbow')
+
+        # Setting up the columns
+        col1, col2 = st.columns([1, 3])
+
+        with col1:
+            st.image(second_url)
+
+        with col2:
+            st.subheader(name)
+            st.write(summary)
+
+            st.markdown(f"**Released on**: {normal_date}")
+            st.markdown(f'**Genres**: {genre_list}')
+
+
+        try:
+            game_video_id = str(the_feat[0]['videos'][0]['video_id'])
+            video_file = youtube_base + game_video_id
+            with st.expander(f"Watch trailer"):
+                if video_file == None:
+                    pass
+                else:
+                    st.video(video_file)
+        except:
+            pass
