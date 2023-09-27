@@ -7,9 +7,13 @@ import time
 import csv
 
 # Loading my link data
-with open('raw_data/all_links_v1', 'rb') as links:
-    game_links = pickle.load(links)
-frame = pd.DataFrame(game_links)
+#Pickle files
+# with open('raw_data/all_links_v1', 'rb') as links:
+#     game_links = pickle.load(links)
+# frame = pd.DataFrame(game_links)
+
+#csv's
+frame = pd.read_csv('raw_data/updated_all_links')
 
 # Prepeing final list and setting count for montoring progress
 # Only the first 116928 are relevant, and we will scrape in batches of 25000
@@ -17,7 +21,7 @@ missed_data = []
 game_data = []
 count = 0
 
-for game in frame[0][0:30000]:
+for game in frame['link'][:10000]:
     # Monitoring progress
     if count % 250 == True:
         print(count)
@@ -30,6 +34,9 @@ for game in frame[0][0:30000]:
         # Setting up the html parser + beautful soup
         game_response = requests.get(f"https://www.backloggd.com{game}")
         game_soup = BeautifulSoup(game_response.content, 'html.parser')
+
+        # Scraping game_id
+        game_id = game_soup.find('div', class_='card mx-auto game-cover overlay-hide')['game_id']
 
         # Scraping the title
         title = game_soup.find('h1', class_='mb-0').string
@@ -112,12 +119,11 @@ for game in frame[0][0:30000]:
         ratings_five_zero = int(ratings[9]['data-tippy-content'].split(' |')[0])
 
         # Get image url
-
-        image_url = 'https://images.igdb.com/igdb/image/upload/t_cover_big/'
-        game_image_url = ''
-        for n in game_soup.find_all('img'):
-            if(n.get('src').startswith(image_url)):
-                game_image_url = (n.get('src'))
+        # image_url = 'https://images.igdb.com/igdb/image/upload/t_cover_big/'
+        # game_image_url = ''
+        # for n in game_soup.find_all('img'):
+        #     if(n.get('src').startswith(image_url)):
+        #         game_image_url = (n.get('src'))
 
         game_data.append({'title': title,
                         'release_date': date_as_datetime,
@@ -144,16 +150,16 @@ for game in frame[0][0:30000]:
                         'ratings_four_zero':ratings_four_zero,
                         'ratings_four_five':ratings_four_five,
                         'ratings_five_zero':ratings_five_zero,
-                        'image':game_image_url,
-                        'url':f"https://www.backloggd.com{game}"})
+                        'url':game,
+                        'game_id':game_id})
     except:
         print(f'Failed at {game}, count = {count}')
         missed_data.append(game)
-        time.sleep(60)
+        time.sleep(20)
 
 game_df = pd.DataFrame(game_data)
-game_df.to_csv('raw_data/all_data_batch_0to30k', index=False)
+game_df.to_csv('raw_data/final_scrape_0to10k', index=False)
 
-with open ('raw_data/missed_data_0to30k', 'w') as csvfile:
+with open ('raw_data/final_scrape_missed_0to10k', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(missed_data)

@@ -12,8 +12,8 @@ from sklearn.decomposition import LatentDirichletAllocation
 
 
 
-vectorizer = TfidfVectorizer(min_df=0.02)
-lda_model = LatentDirichletAllocation(n_components=10, max_iter = 50, learning_method='online',)
+# vectorizer = TfidfVectorizer(min_df=0.02)
+# lda_model = LatentDirichletAllocation(n_components=20, max_iter = 50, learning_method='online',)
 
 def preprocessing(sentence):
     extended_stop_words = ['able','access','across','also','always','another','away','back',
@@ -77,8 +77,8 @@ def fit_vectorizer(processed_sentence):
     vectorized_sentence = vectorizer.transform(processed_sentence)
     return vectorizer, vectorized_sentence
 
-def fit_lda(vectorized_sentence):
-    lda = LatentDirichletAllocation(n_components=10, max_iter = 50, learning_method='online')
+def fit_lda(vectorized_sentence, num_topics):
+    lda = LatentDirichletAllocation(n_components=num_topics, max_iter = 50, learning_method='online')
     lda.fit(vectorized_sentence)
     return lda
 
@@ -87,3 +87,11 @@ def nlp_topic(x, fitted_vectorizer, fitted_lda):
     vec_x_array = fitted_lda.transform(vectorised_x)
     vec_list = vec_x_array[0].tolist()
     return vec_list.index(max(vec_list))
+
+
+# This prints the topics of the above NLP model
+def print_topics(model, vectorizer):
+    for idx, topic in enumerate(model.components_):
+        print("Topic %d:" % (idx))
+        print([(vectorizer.get_feature_names_out()[i], topic[i])
+                        for i in topic.argsort()[:-10 - 1:-1]])
