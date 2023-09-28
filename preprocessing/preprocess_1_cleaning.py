@@ -15,6 +15,9 @@ from preprocessing.preprocess_2_features import create_gen, create_gen_3
 # ONLY MAIN GAMES
 # This function removes everything that is not a main game
 def only_main_games(df):
+    """
+    Filters the dataframe for only main games
+    """
     main_game_mask =df['category'] == 'main'
     only_main_games = df[main_game_mask]
 
@@ -26,12 +29,16 @@ def only_main_games(df):
 # The below functions delete: duplicates; games with no release dates
 
 def drop_duplicates(df):
-    '''This function deletes duplicates'''
+    '''
+    Deletes duplicated titles
+    '''
     df.sort_values('title')
     return df.drop_duplicates()
 
 def drop_no_release_date(df):
-    '''This function deletes games with no release date'''
+    '''
+    Deletes games with no release date
+    '''
     df = df[df['release_date'] != "0001-01-01"]
     return df
 
@@ -42,12 +49,14 @@ def drop_no_release_date(df):
 # Only the last function matters - make_list_column_to_lists
 # It runs all the ones above it
 def make_stringlist_list(string):
-    '''This removes square brackets, and splits the string by comma to the create a list'''
+    '''
+    Removes square brackets, and splits the string by comma to the create a list
+    '''
     list_of_strings = string[2:-2].replace("'", '').split(',')
     return list_of_strings
 
 def remove_whitespace(list_):
-    '''This removes whitesapces from items within lists'''
+    '''Removes whitesapces from items within lists'''
     empty = []
 
     for i in range(len(list_)):
@@ -81,7 +90,9 @@ def make_list_columns_to_lists(df, columns):
 # It runs all the ones above it
 
 def thousands_converter(x):
-    '''This function removes the K and . from objects such as 4.1K, replacing with 4100'''
+    '''
+    Removes the K and . from objects such as 4.1K, replacing with 4100
+    '''
     if 'K' in x and '.' in x:
         x = x.replace('K', '00')
         x = x.replace('.','')
@@ -91,16 +102,13 @@ def thousands_converter(x):
     else:
         return x
 
-#def remove_K(x):
- #   '''This function removes the K from objscts such as 92K, replacing with 92000'''
-  #  if
-   # else:
-    #    return x
 
 #This is the final function for use on numeric columns
 # numeric_columns = ['plays','playing','backlogs','wishlist','total_reviews','total_lists']
 def numeric_objects_reformatted(df, column):
-    '''This function applies the removal of K and . above in order, and returns as integers'''
+    '''
+    This function applies the removal of K and . above in order, and returns as integers
+    '''
     df[column] = df[column].apply(thousands_converter)
     df[column] = df[column].astype('int')
     return df
@@ -111,6 +119,7 @@ def numeric_objects_reformatted(df, column):
 #The below changes the type of the release_date column
 
 def change_to_datetype(df, column):
+    """Changes string date to datetime object"""
     df[column]=pd.to_datetime(df[column])
     return df
 
@@ -119,12 +128,18 @@ def change_to_datetype(df, column):
 # The below function removes games with no release date
 
 def delete_no_release_date(df):
+    """
+    Removes games with no release date
+    """
     return df[df['release_date'] != "null"]
 
 # REMOVING NO REVIEWS
 
 # This function removes rows with no avg_review
 def remove_no_reviews(df):
+    """
+    Removes games with no reviews
+    """
     df_good_mask = df['avg_review'] != 0
     df_with_reviews = df[df_good_mask]
 
@@ -133,6 +148,9 @@ def remove_no_reviews(df):
 # REMOVING UNNECESARY COLUMNS
 
 def drop_unnecesary_coulumns(df):
+    """
+    Drops pre-determined unnecesary columns
+    """
     cols_to_drop = ['developers', 'platforms',
                     'ratings_one_zero', 'ratings_one_five',
                     'ratings_two_zero', 'ratings_two_five',

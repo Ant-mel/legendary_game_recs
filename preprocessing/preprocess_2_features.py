@@ -4,7 +4,9 @@ import datetime
 
 # ONE HOT ENCODER
 def categorical_encoder(category):
-    '''This creates an OHE, and returns the columns as well as the encoder'''
+    '''
+    Creates an OHE, and returns the columns as well as the encoder
+    '''
     mlb = MultiLabelBinarizer()
     transformed = mlb.fit_transform(category)
 
@@ -15,8 +17,10 @@ def categorical_encoder(category):
 # This function needs to happen after the above
 # It reduces the amount of OHE columns based on popularity
 def keep_x_OHE_columns(OHE_coulmns, num_features=10):
-    """Slices by the X (num_featutes) most common columns"""
-    """Returns only the amount specified"""
+    """
+    Slices by the X (num_featutes) most common columns
+    Returns only the amount specified
+    """
     cols_by_power = pd.DataFrame(OHE_coulmns.sum().sort_values(ascending=False))
 
     top_20_OHE = list(cols_by_power[0:num_features].index)
@@ -29,8 +33,9 @@ def keep_x_OHE_columns(OHE_coulmns, num_features=10):
 # It returns a df of only the top x ohe columns for each
 # I recommend its used on Genre and Platform, but not Developer - not strict
 def keeping_ohe_columns_and_dropping_the_originals(df_of_columns, num_ohe):
-    """Returns a df of all categorical functions, but does not return the encoder.
-    I will need to find out the best way to return the encoder for processing new data
+    """
+    Returns a df of all categorical functions.
+    Does not return the encoder.
     """
     empty = pd.DataFrame()
 
@@ -47,6 +52,9 @@ def keeping_ohe_columns_and_dropping_the_originals(df_of_columns, num_ohe):
 # CREATING GENERATIONAL FEATURE
 # This function subsets the generation
 def create_gen(seri):
+    """
+    Creates 5 generations based on time
+    """
     gen_1_end = datetime.datetime.strptime('1983-01-01', '%Y-%m-%d')
     gen_2_end = datetime.datetime.strptime('1995-01-01', '%Y-%m-%d')
     gen_3_end = datetime.datetime.strptime('2006-01-01', '%Y-%m-%d')
@@ -73,6 +81,9 @@ def create_gen(seri):
 
 
 def create_gen_3(seri):
+    """
+    Creates 3 generations based on time
+    """
     gen_1_end = datetime.datetime.strptime('1983-01-01', '%Y-%m-%d')
     gen_2_end = datetime.datetime.strptime('1995-01-01', '%Y-%m-%d')
     gen_3_end = datetime.datetime.strptime('2006-01-01', '%Y-%m-%d')
