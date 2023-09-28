@@ -37,4 +37,4 @@ Our data gets old, quickly. We aim to automate scraping, processing and retraini
 We also have data on upcoming games, and are still working out how to recommend those - perhaps another model?
 
 # Try it out
-[legendary-game-recs-test.streamlit.app](legendary-game-recs-test.streamlit.app)
+[legendary-game-recs-test.streamlit.app](legendary-game-recs.streamlit.app)
