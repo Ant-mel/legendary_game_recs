@@ -11,18 +11,6 @@ from preprocessing.preprocess_3_nlp import *
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler
 
-from sklearn.pipeline import make_pipeline
-from sklearn.pipeline import make_union
-from sklearn.compose import make_column_transformer
-import datetime
-from sklearn.preprocessing import MultiLabelBinarizer
-
-import string
-from nltk.corpus import stopwords
-from nltk import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import LatentDirichletAllocation
 
 # CLEANING PIPELINE & REFERENCE DATAFRAME
 
@@ -75,8 +63,10 @@ def make_reference_df_full_csv(df):
 
 
 # JOINING DESCRIPTION NLP TOPICS TO REFERENCE TO CREATE MODEL DF
-'''Take the reference df and the topics df and concatenate'''
 def make_model_df(df1, df2):
+    '''
+    Takes the reference df and the topics df and concatenate
+    '''
     return pd.concat((df1, df2), axis=1)
 
 # TRAINING DATA PIPELINE
@@ -88,6 +78,10 @@ col_transformer = ColumnTransformer([('num_transformer', num_transformer,
                                     remainder='passthrough')
 
 def make_training_data(reference_data):
+    """
+    Uses MinMax Scaler to create training data
+    Returns X_train and y_train
+    """
     no_genre = reference_data.drop('genres', axis=1)
     dropped = drop_unnecesary_coulumns(no_genre)
 
@@ -106,6 +100,10 @@ col_transformer_yeo = ColumnTransformer([('num_transformer', num_transformer_yeo
                                   remainder='passthrough')
 
 def make_training_data_yeo(reference_data):
+    """
+    Uses Yeo-Johnson scaling to create training data
+    Returns X_train and y_train
+    """
     no_genre = reference_data.drop('genres', axis=1)
     dropped = drop_unnecesary_coulumns(no_genre)
 
