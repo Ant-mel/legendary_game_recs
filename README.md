@@ -27,7 +27,7 @@ The data has insanely right skewed. And it was biasing our model quite a lot. We
 **KNearestNeighbours**
 We chose to run a KNN model as it brings back multiple Neighbours. This was essential in allowing gamers to filter their recommendations. 
 
-Like Breath of the Wild, but want a racing game? Try it out! 
+Do you like The Witcher 3, but want an Indie/Puzzle game? Try it out! 
 
 ## Front End
 We build all of this on Streamlit. 
