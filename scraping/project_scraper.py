@@ -21,7 +21,7 @@ missed_data = []
 game_data = []
 count = 0
 
-for game in frame['link'][60000:70000]:
+for game in frame['link'][90000:120000]:
     # Monitoring progress
     if count % 250 == True:
         print(count)
@@ -158,8 +158,8 @@ for game in frame['link'][60000:70000]:
         time.sleep(20)
 
 game_df = pd.DataFrame(game_data)
-game_df.to_csv('raw_data/final_scrape_60kto70k', index=False)
+game_df.to_csv('raw_data/final_scrape_90kto120k', index=False)
 
-with open ('raw_data/final_scrape_missed_60to70k', 'w') as csvfile:
+with open ('raw_data/final_scrape_missed_90to120k', 'w') as csvfile:
     writer = csv.writer(csvfile, delimiter=',')
     writer.writerow(missed_data)
