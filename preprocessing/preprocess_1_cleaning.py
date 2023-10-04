@@ -93,6 +93,7 @@ def thousands_converter(x):
     '''
     Removes the K and . from objects such as 4.1K, replacing with 4100
     '''
+    x = str(x)
     if 'K' in x and '.' in x:
         x = x.replace('K', '00')
         x = x.replace('.','')

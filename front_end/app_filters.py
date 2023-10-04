@@ -91,55 +91,54 @@ def time_range_start_stop(df, start, stop):
     today_date = pd.Timestamp(datetime.date.today())
 
 
-
     if start == 'Any':
         df_filt_start = df
     if start == 'Prehistoric':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    zone_1 > x)]
+                                                    zone_1 > x)]
     if start == '1980s':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    zone_2 < x)]
+                                                    zone_1 < x)]
     if start == '1990s':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    zone_3 < x)]
+                                                    zone_2 < x)]
     if start == '2000s':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    zone_4 < x)]
+                                                    zone_3 < x)]
     if start == '2010s':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    zone_5 < x)]
+                                                    zone_4 < x)]
     if start == '2020s':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    today_date < x)]
+                                                    zone_5 < x)]
     if start == 'Upcoming':
         df_filt_start = df[df['release_date'].apply(lambda x:
-                    today_date > x)]
+                                                    today_date < x)]
 
     if stop == 'Any':
         return df_filt_start
     if stop == 'Prehistoric':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    zone_1 > x)]
+                                                                        zone_1 > x)]
     if stop == '1980s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    zone_2 > x)]
+                                                                        zone_2 > x)]
         return df_filt_end
     if stop == '1990s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    zone_3 > x)]
+                                                                        zone_3 > x)]
         return df_filt_end
     if stop == '2000s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    zone_4 > x)]
+                                                                        zone_4 > x)]
         return df_filt_end
     if stop == '2010s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    zone_5 > x)]
+                                                                        zone_5 > x)]
         return df_filt_end
     if stop == '2020s':
         df_filt_end = df_filt_start[df_filt_start['release_date'].apply(lambda x:
-                    today_date > x)]
+                                                                        today_date > x)]
         return df_filt_end
     if stop == 'Upcoming':
         return df_filt_start
