@@ -40,7 +40,6 @@ games_dev = make_list_columns_to_lists(games, ['developers'])
 # model = load('raw_data/model_v3.joblib')
 
 
-
 #Lists for dropdown menu's
 list_of_genres = ['Any', 'Adventure', 'Arcade', 'Brawler', 'Card & Board Game', 'Fighting',
        'Indie', 'MOBA', 'Music', 'Pinball', 'Platform', 'Point-and-Click',
@@ -90,11 +89,12 @@ if st.button('Recommend a game'):
     filt_date = time_range_start_stop(filt_genres, start_range, end_range)
     filt_platform = platform_filter(filt_date, console)
 
-    # st.write(int(filt_platform[1:2]['game_id']))
+    if filt_platform.iloc[0]['title'] == selected_game:
+        first_rec_game_id = int(filt_platform.iloc[1]['game_id'])
+    else:
+        first_rec_game_id = int(filt_platform.iloc[0]['game_id'])
 
-    first_rec_game_id = int(filt_platform[1:2]['game_id'])
-
-    #Calling hte API
+    #Calling the API
     CLIENT_ID = os.getenv("CLIENT_ID")
     CLIENT_SECRET = os.getenv("CLIENT_SECRET")
     GRANT_TYPE = os.getenv("GRANT_TYPE")
@@ -109,8 +109,6 @@ if st.button('Recommend a game'):
 
     the_feat = json.loads(wrapper.api_request('games',
                 f'fields platforms.name, cover.url, cover.image_id, name, release_dates.date, genres.name, summary, videos.video_id; where id = {first_rec_game_id};'))
-
-    # st.write(the_feat[0]['summary'])
 
     # DATA TO SHOW
     image_id = str(the_feat[0]['cover']['image_id'])
