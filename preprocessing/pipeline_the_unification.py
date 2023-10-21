@@ -23,23 +23,6 @@ pipeline = Pipeline([('cleaning', cleaning),
                      ('remove_no_reviews', remove_0_reviews),
                      ('keeps_only_main_games', only_mains)])
 
-#def create_reference_dataframe(df):
-#    '''
-#    This cleans the data, removes 0 value reviews, returns a reference dataframe for the model to pull from
-#    '''
-#    new_data = pipeline.fit_transform(df)
-#    reset_index_df = new_data.reset_index(drop=True)
-
-#    ohe, mlb = categorical_encoder(reset_index_df['genres'])
-#    cols = keep_x_OHE_columns(ohe)
-
-#    concats = pd.concat([reset_index_df, cols], axis=1)
-    # no_genre = concats.drop('genres', axis=1)
-#    reference_dataframe = pd.get_dummies(concats, columns=['gen'])
-#    reference_dataframe['description_nlp'] = reference_dataframe['description'].astype(str)
-
-#    return reference_dataframe
-
 def pipeline_genre_ohe_only(df):
     '''
     This cleans the data, removes 0 value reviews and returns x amount of ohe columns of genre
@@ -113,3 +96,16 @@ def make_training_data_yeo(reference_data):
     y_train = transformed[6]
 
     return X_train, y_train
+
+
+def ohe_and_nlp(data, ohe_column_name, n_ohe_features, nlp_column_name, n_nlp_features):
+    """
+    Creates both OHE and NLP features
+    """
+    ohe_columns = keeping_ohe_columns_and_dropping_the_originals(data[[ohe_column_name]], n_ohe_features)
+
+    ohe_added_to_data = drop_column_and_concat(data, ohe_columns, ohe_column_name)
+
+    ohe_and_topics = topics_from_nlp(ohe_added_to_data, nlp_column_name, n_nlp_features)
+
+    return ohe_and_topics

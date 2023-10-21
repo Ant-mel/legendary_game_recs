@@ -2,6 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import MultiLabelBinarizer
 import datetime
 
+from sklearn.preprocessing import MultiLabelBinarizer, PowerTransformer
+from sklearn.compose import ColumnTransformer
+
 # ONE HOT ENCODER
 def categorical_encoder(category):
     '''
@@ -23,8 +26,8 @@ def keep_x_OHE_columns(OHE_coulmns, num_features=10):
     """
     cols_by_power = pd.DataFrame(OHE_coulmns.sum().sort_values(ascending=False))
 
-    top_20_OHE = list(cols_by_power[0:num_features].index)
-    cols_to_keep = OHE_coulmns[top_20_OHE]
+    top_X_columns = list(cols_by_power[0:num_features].index)
+    cols_to_keep = OHE_coulmns[top_X_columns]
 
     return cols_to_keep
 
@@ -102,3 +105,25 @@ def create_gen_3(seri):
             dupe.iloc[i, 27] = 3
 
     return dupe
+
+
+def yeo_johnson_scaling(X_train, column):
+    """
+    This scales skewed data, and must be fed X_train and not the entire dataset
+    Otherwise you looks visibility on your y, or just make it harder to find
+    """
+    num_transformer_yeo = PowerTransformer(method='yeo-johnson', standardize=False)
+
+    col_transformer = ColumnTransformer([('num_transformer', num_transformer_yeo,
+                                    [column])],
+                                    remainder='passthrough')
+
+    transfomed_X_train = pd.DataFrame(col_transformer.fit_transform(X_train))
+
+    return transfomed_X_train
+
+def drop_column_and_concat(data, new_columns, column_to_drop):
+    new_df = pd.concat((data, new_columns), axis=1)
+    new_df.drop(columns=column_to_drop, inplace=True)
+
+    return new_df
