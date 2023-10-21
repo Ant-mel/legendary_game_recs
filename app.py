@@ -13,7 +13,7 @@ import streamlit as st
 from preprocessing.pipeline_the_unification import change_to_datetype
 from preprocessing.api_processing import get_names_from_dict
 from preprocessing.preprocess_1_cleaning import make_list_columns_to_lists
-from model.model_create import predict_baseline_model
+from model.model_functions import predict_baseline_model
 from front_end.app_filters import genre_filter, time_range_start_stop, platform_filter
 from igdb.wrapper import IGDBWrapper
 import requests

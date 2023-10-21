@@ -36,3 +36,17 @@ def create_baseline_model_new_csv(raw_data):
         n_neighbors=11).fit(X_train, y_train)
 
     return knn_model, reference_data, X_train
+
+
+def model_predict(indicies, model, reference_data, X_train):
+    game = X_train[indicies:indicies+1]
+
+    ind_list = list(model.kneighbors(game,n_neighbors=10)[1][0])
+    prediction = reference_data.iloc[ind_list]
+
+    return prediction
+
+def train_model(X_train, y_train, neighbours=10):
+    model = KNeighborsRegressor(n_neighbors=neighbours).fit(X_train, y_train)
+
+    return model
