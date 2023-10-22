@@ -88,3 +88,14 @@ def encode_api_data(raw_data, link_data, api_data):
     everything = pd.concat((filled_data, ohe_colums), axis=1)
 
     return everything.drop(extra_cols_to_drop, axis=1)
+
+
+def ohe_api_category(data, column_name):
+    """
+    Returns OHE columns of api categories
+    """
+    data[column_name] = data[column_name].apply(get_names_from_dict)
+
+    ohes, mlb = categorical_encoder(data[column_name])
+
+    return ohes
