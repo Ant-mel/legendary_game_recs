@@ -207,7 +207,7 @@ def create_nlp_topics_and_append(data, column_to_clean, origin_column, lda_compo
     lda_model.fit(vectorized_descriptions)
 
     # Creating topics column, and encoding into dara
-    data['topic'] = data[column_to_clean].apply(nlp_topic, vectorizer = vectorizer, lda_model = lda_model)
+    data['topic'] = data[column_to_clean].apply(nlp_topic, fitted_vectorizer = vectorizer, fitted_lda = lda_model)
     topics = pd.get_dummies(data['topic'])
 
     if total_features_to_make == None:

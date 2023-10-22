@@ -39,7 +39,7 @@ def get_names_from_dict(dict_list):
             item = dict_list[i]['name']
             list_of_items.append(item)
     except:
-        list_of_items = None
+        list_of_items.append('')
 
     return list_of_items
 
