@@ -21,3 +21,6 @@ streamlit
 requests
 datetime
 bs4
+
+.ipynb_checkpoints/
+__pycache__/
