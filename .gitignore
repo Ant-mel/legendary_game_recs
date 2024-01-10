@@ -3,3 +3,6 @@ raw_data/
 .DS_Store
 __pycache__
 notebooks/
+
+.ipynb_checkpoints/
+__pycache__/
