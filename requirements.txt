@@ -9,12 +9,15 @@ pygeohash
 pytest
 nltk
 
-
 google-cloud-bigquery
 google-cloud-storage
 db-dtypes
 pyarrow
 
-
 joblib
 igdb-api-v4
+
+streamlit
+requests
+datetime
+bs4
