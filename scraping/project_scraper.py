@@ -1,16 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import datetime
-import pickle
+import datetime as datetime
 import time
 import csv
 
-# Loading my link data
-#Pickle files
-# with open('raw_data/all_links_v1', 'rb') as links:
-#     game_links = pickle.load(links)
-# frame = pd.DataFrame(game_links)
+from google.cloud import bigquery
+from flask import Flask
+import os
 
 #csv's
 frame = pd.read_csv('raw_data/updated_all_links')
@@ -28,6 +25,7 @@ for game in frame['link'][90000:120000]:
         print(game)
     else:
         pass
+
     count += 1
 
     try:
@@ -117,13 +115,6 @@ for game in frame['link'][90000:120000]:
         ratings_four_zero = int(ratings[7]['data-tippy-content'].split(' |')[0])
         ratings_four_five = int(ratings[8]['data-tippy-content'].split(' |')[0])
         ratings_five_zero = int(ratings[9]['data-tippy-content'].split(' |')[0])
-
-        # Get image url
-        # image_url = 'https://images.igdb.com/igdb/image/upload/t_cover_big/'
-        # game_image_url = ''
-        # for n in game_soup.find_all('img'):
-        #     if(n.get('src').startswith(image_url)):
-        #         game_image_url = (n.get('src'))
 
         game_data.append({'title': title,
                         'release_date': date_as_datetime,
