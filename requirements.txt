@@ -21,5 +21,6 @@ streamlit
 requests
 datetime
 bs4
+db_dtypes
 
 flask
