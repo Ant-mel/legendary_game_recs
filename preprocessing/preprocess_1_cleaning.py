@@ -11,6 +11,19 @@ from preprocessing.preprocess_2_features import create_gen, create_gen_3
 # **We are chaining copies of the original df so it is advisable to assign the
 # cleaned dataframe as a new variable
 
+# Used in scraping
+def drop_dot_make_int(string):
+    """
+    Removes '.' from summarised numbers, and drops the extra 0 to accomidate for it
+    """
+
+    if '.' in string:
+        drop_dot = string.replace('.', '')[:-1]
+        value = int(drop_dot)
+    else:
+        value = int(string)
+
+    return value
 
 # ONLY MAIN GAMES
 # This function removes everything that is not a main game
@@ -82,57 +95,6 @@ def make_list_columns_to_lists(df, columns):
         cleaned_df[col] = cleaned
     return cleaned_df
 
-# NUMERIC PROCESSING
-
-# The below functions clean Plays, Playing, Backlogs, Wishlist,
-# Total_Reviews, Total_Lists columns
-# Only the last function matters - numeric_objects_reformatted
-# It runs all the ones above it
-
-def thousands_converter(x):
-    '''
-    Removes the K and . from objects such as 4.1K, replacing with 4100
-    '''
-    x = str(x)
-    if 'K' in x and '.' in x:
-        x = x.replace('K', '00')
-        x = x.replace('.','')
-        return x
-    elif 'K' in x:
-        return x.replace('K','000')
-    else:
-        return x
-
-
-#This is the final function for use on numeric columns
-# numeric_columns = ['plays','playing','backlogs','wishlist','total_reviews','total_lists']
-def numeric_objects_reformatted(df, column):
-    '''
-    This function applies the removal of K and . above in order, and returns as integers
-    '''
-    df[column] = df[column].apply(thousands_converter)
-    df[column] = df[column].astype('int')
-    return df
-
-
-# DATETIME PROCESSING
-
-#The below changes the type of the release_date column
-
-def change_to_datetype(df, column):
-    """Changes string date to datetime object"""
-    df[column]=pd.to_datetime(df[column])
-    return df
-
-# DELETING NULL RELEASE DATES
-
-# The below function removes games with no release date
-
-def delete_no_release_date(df):
-    """
-    Removes games with no release date
-    """
-    return df[df['release_date'] != "null"]
 
 # REMOVING NO REVIEWS
 
