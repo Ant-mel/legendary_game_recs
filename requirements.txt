@@ -7,7 +7,7 @@ pandas==1.5.3
 # matplotlib
 pygeohash
 # pytest
-# nltk
+nltk
 
 google-cloud-bigquery
 google-cloud-storage
@@ -15,7 +15,7 @@ google-cloud-storage
 # pyarrow
 
 # joblib
-# igdb-api-v4
+igdb-api-v4
 
 streamlit
 requests
