@@ -56,32 +56,34 @@ def process_raw_data(data, year, month, day):
     """
     This cleans and seperates the data into
     upcoming games and released games
+    I realised you can do all of this with a SQL query...
+    So only a few parts relevant now - the rest hashed out
     """
 
-    # Dropping duplicates
+    # # Dropping duplicates
     working_data = data.copy()
-    working_data.drop_duplicates(subset=['game_id'],inplace=True)
+    # working_data.drop_duplicates(subset=['game_id'],inplace=True)
 
     # Turning categorical features into lists (they arrive as strings that look like lists)
     string_to_list_colums = ['developers','genres','platforms']
     working_data[string_to_list_colums] = make_list_columns_to_lists(working_data, string_to_list_colums)
 
-    # Changining release_date to a datetime so we can filter it later
-    working_data['release_date'] = pd.to_datetime(working_data['release_date'], errors='coerce')
+    # # Changining release_date to a datetime so we can filter it later
+    # working_data['release_date'] = pd.to_datetime(working_data['release_date'], errors='coerce')
 
-    # Removing games wuth no release date.
-    year_1_mask = working_data['release_date'].isna()
-    games_that_exist = working_data[~year_1_mask]
+    # # Removing games wuth no release date.
+    # year_1_mask = working_data['release_date'].isna()
+    # games_that_exist = working_data[~year_1_mask]
 
-    # Removing DLCs, Mods and the such
-    only_main_games_df = only_main_games(games_that_exist)
+    # # Removing DLCs, Mods and the such
+    # only_main_games_df = only_main_games(games_that_exist)
 
     # Splitting the data into upcoming games and TBC games.
-    upcoming_mask = only_main_games_df['release_date'] > pd.Timestamp(datetime(year, month, day))
-    upcoming_games = only_main_games_df[upcoming_mask]
-    released_games = only_main_games_df[~upcoming_mask]
+    upcoming_mask = working_data['release_date'] > pd.Timestamp(datetime(year, month, day))
+    upcoming_games = working_data[upcoming_mask]
+    released_games = working_data[~upcoming_mask]
 
-    # Selecting games with reviews, otherwise no one wants to play them.
-    released_games_with_reviews = released_games[released_games['avg_review'] > 0].copy()
+    # # Selecting games with reviews, otherwise no one wants to play them.
+    # released_games_with_reviews = released_games[released_games['avg_review'] > 0].copy()
 
-    return released_games_with_reviews, upcoming_games
+    return released_games, upcoming_games

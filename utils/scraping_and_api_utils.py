@@ -48,6 +48,6 @@ def prepare_json_df(original_json_df):
     original_json_df['game_modes'] = original_json_df['game_modes'].apply(get_names_from_dict)
     original_json_df['player_perspectives'] = original_json_df['player_perspectives'].apply(get_names_from_dict)
     original_json_df['game_engines'] = original_json_df['game_engines'].apply(get_names_from_dict)
-    original_json_df['age_ratings'] = original_json_df['age_ratings'].apply(get_category_descriptions)
+    # original_json_df['age_ratings'] = original_json_df['age_ratings'].apply(get_category_descriptions)
 
     return original_json_df

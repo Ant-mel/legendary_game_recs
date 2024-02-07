@@ -1,20 +1,21 @@
 scikit-learn==1.2.1
-# seaborn
+seaborn
 numpy==1.23.5
 pandas==1.5.3
-# ipykernel
-# yapf
-# matplotlib
+ipykernel
+yapf
+matplotlib
 pygeohash
-# pytest
+pytest
 nltk
 
 google-cloud-bigquery
 google-cloud-storage
-# db-dtypes
-# pyarrow
+google-cloud-secret-manager
+db-dtypes
+pyarrow
 
-# joblib
+joblib
 igdb-api-v4
 
 streamlit

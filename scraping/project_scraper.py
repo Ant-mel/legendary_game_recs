@@ -8,6 +8,8 @@ from google.cloud import bigquery
 import os
 import sys
 
+from utils.scraping_and_api_utils import drop_dot_make_int
+
 # Checks if a file exists. If the file exists then then this wont run
 flag_file_path = "/app/flag_file.txt"
 
@@ -15,13 +17,12 @@ if os.path.exists(flag_file_path):
     print("Script has already been run. Exiting.")
     sys.exit(0)
 
-
 client = bigquery.Client()
 
-dataset = 'game_data_01_24'
-links_table = 'game_links'
-game_data_table = 'game_data'
-missed_data_table = 'missed_data'
+dataset = 'raw_data'
+links_table = 'backlogged_game_links'
+game_data_table = 'backlogged_game_data'
+missed_data_table = 'backlogged_missed_data'
 
 query = f"""SELECT * FROM `legendary-game-recs.game_data_01_24.game_links`"""
 
@@ -36,7 +37,7 @@ frame = data.copy()
 
 for game in frame['link']:
     # Monitoring progress
-    if count % 250 == True:
+    if count % 10 == True:
         print(count)
     else:
         pass
@@ -69,10 +70,11 @@ for game in frame['link']:
         # Getting the plays, playing, backlogs and wishlist information
 
         counter = game_soup.find('div', id='log-counters').find_all('a', class_='plays-counter')
-        plays = int(counter[0].find('p', class_='mb-0').string)
-        playing =int(counter[1].find('p', class_='mb-0').string)
-        backlogs =int(counter[2].find('p', class_='mb-0').string)
-        wishlist =int(counter[3].find('p', class_='mb-0').string)
+
+        plays = drop_dot_make_int(counter[0].find('p', class_='mb-0').string.replace('K', '000'))
+        playing = drop_dot_make_int(counter[1].find('p', class_='mb-0').string.replace('K', '000'))
+        backlogs = drop_dot_make_int(counter[2].find('p', class_='mb-0').string.replace('K', '000'))
+        wishlist = drop_dot_make_int(counter[3].find('p', class_='mb-0').string.replace('K', '000'))
 
         # Get a list of publis
         publisher_list = []
@@ -108,8 +110,8 @@ for game in frame['link']:
         # Get number of reviews - number of lists associated is here as well
         lists_reviews = game_soup.find_all('p', class_='game-page-sidecard')
 
-        total_lists = int(lists_reviews[0].get_text(strip=True).strip(" Lists"))
-        total_reviews = int(lists_reviews[1].get_text(strip=True).strip(" Reviews"))
+        total_lists = drop_dot_make_int(lists_reviews[0].get_text(strip=True).strip(" Lists").replace('K', '000'))
+        total_reviews = drop_dot_make_int(lists_reviews[1].get_text(strip=True).strip(" Reviews").replace('K', '000'))
 
         # Get game category + main (If applicable)
         # If the search for category fails, then the game is the main game
@@ -166,26 +168,27 @@ for game in frame['link']:
                         'game_id':game_id}
 
         # Inserting into GCP
-        table = client.dataset(dataset).table(game_data_table)
+        table = client.dataset(dataset).table('game_data')
         errors = client.insert_rows_json(table, [data_dict])
 
         # Relaying errors for some sexy debugging
         if errors:
             print(f'Failed {game}, {errors}')
             #Saving missed data, so we can try get it later
-            table = client.dataset(dataset).table(missed_data_table)
+            table = client.dataset(dataset).table('missed_data')
             errors = client.insert_rows_json(table, [{'link':game}])
         else:
             print(f'all good {count}')
+
 
     except:
         # Relaying when Backlogged rejects us
         print(f'Page failure at {game}, count = {count}')
         #Saving missed data, so we can try get it later
-        table = client.dataset(dataset).table(missed_data_table)
+        table = client.dataset(dataset).table('missed_data')
         errors = client.insert_rows_json(table, [{'link':game}])
 
-        time.sleep(20)
+        time.sleep(3)
 
 
 with open(flag_file_path, "w") as flag_file:
