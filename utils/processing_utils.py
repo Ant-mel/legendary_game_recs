@@ -1,6 +1,9 @@
 import pandas as pd
 from datetime import datetime
 
+from sklearn.preprocessing import MultiLabelBinarizer,PowerTransformer
+
+
 def make_stringlist_list(string):
     '''
     Removes square brackets, and splits the string by comma to the create a list
@@ -52,7 +55,7 @@ def only_main_games(df):
     return only_main_games.drop('category', axis=1)
 
 
-def process_raw_data(data, year, month, day):
+def process_raw_data(data, year, month, day, list_of_multicategorical_columns):
     """
     This cleans and seperates the data into
     upcoming games and released games
@@ -65,7 +68,7 @@ def process_raw_data(data, year, month, day):
     # working_data.drop_duplicates(subset=['game_id'],inplace=True)
 
     # Turning categorical features into lists (they arrive as strings that look like lists)
-    string_to_list_colums = ['developers','genres','platforms']
+    string_to_list_colums = list_of_multicategorical_columns
     working_data[string_to_list_colums] = make_list_columns_to_lists(working_data, string_to_list_colums)
 
     # # Changining release_date to a datetime so we can filter it later
@@ -87,3 +90,31 @@ def process_raw_data(data, year, month, day):
     # released_games_with_reviews = released_games[released_games['avg_review'] > 0].copy()
 
     return released_games, upcoming_games
+
+
+def multilable_encoding(data, column):
+    """
+    This ohe encodes categories that are stored in lists
+    """
+    # Initilizing encoder and transforming the data
+    mlb_genre = MultiLabelBinarizer()
+    transformed_genre = mlb_genre.fit_transform(data[column])
+
+    # Labeling newly created features
+    genre_ohe_colums = pd.DataFrame(transformed_genre, columns=mlb_genre.classes_)
+    # Concatinating the data
+    droped_columns = data.drop(column, axis=1).copy()
+    scaled_data = pd.concat((droped_columns, genre_ohe_colums), axis=1)
+
+    scaled_data.rename(columns={'':f'NaN_{column}',}, inplace=True)
+
+    return scaled_data
+
+def yeo_johnson_scaling(X_train, column):
+  """
+  Scales the specified column using Yeo-Johnson method (PowerTransformer).
+  """
+  transformer = PowerTransformer(method='yeo-johnson', standardize=False)
+  transformed_column = transformer.fit_transform(X_train[[column]]).squeeze()
+  X_train[column] = transformed_column
+  return X_train
