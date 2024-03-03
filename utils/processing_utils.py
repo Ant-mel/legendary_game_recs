@@ -92,7 +92,7 @@ def process_raw_data(data, year, month, day, list_of_multicategorical_columns):
     return released_games, upcoming_games
 
 
-def multilable_encoding(data, column):
+def multilable_encoding(data, column, len_of_feat=11, genre_list = None):
     """
     This ohe encodes categories that are stored in lists
     """
@@ -102,11 +102,20 @@ def multilable_encoding(data, column):
 
     # Labeling newly created features
     genre_ohe_colums = pd.DataFrame(transformed_genre, columns=mlb_genre.classes_)
+
     # Concatinating the data
     droped_columns = data.drop(column, axis=1).copy()
-    scaled_data = pd.concat((droped_columns, genre_ohe_colums), axis=1)
 
-    scaled_data.rename(columns={'':f'NaN_{column}',}, inplace=True)
+    # Only keeping the amount of columns we want
+    if genre_list:
+        scaled_data = pd.concat((droped_columns, genre_ohe_colums[genre_list]), axis=1)
+
+    else:
+        list_of_feats = pd.DataFrame(genre_ohe_colums.sum().sort_values(ascending=False)[:len_of_feat]).index.to_list()
+
+        scaled_data = pd.concat((droped_columns, genre_ohe_colums[list_of_feats]), axis=1)
+
+        scaled_data.rename(columns={'':f'NaN_{column}',}, inplace=True)
 
     return scaled_data
 
